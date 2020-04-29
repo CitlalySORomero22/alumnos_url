@@ -1,0 +1,101 @@
+import #web = pip install web.py#
+import #app app.py
+import #csv
+import requests
+
+class AlumnosUrl:
+    def GET(self):
+        try:
+            datos = web.input()
+            if datos['token'] == "":
+                matricula = int(datos['matricula'])
+                nombre = int(datos['nombre'])
+                ape_pat = int(datos['ape_pat'])
+                ape_mat = int(datos['ape_mat'])
+
+#Insertar datos
+dato = raw_input("Dato: ")
+query = "INSERT INTO b (b2) VALUES ('%s')" % dato
+run_query(query)
+
+#Seleccionar todos los registros
+query = "SELECT b1, b2 FROM b ORDER BY b2 DESC" 
+result = run_query(query) 
+print result
+
+#Seleccionar solo registros coincidentes
+criterio = raw_input("Ingrese dato de búsqueda: ") 
+query = "SELECT b1, b2 FROM b WHERE b2 = '%s'" % criterio 
+result = run_query(query)
+print result
+
+#Eliminar registros
+criterio = raw_input("Ingrese dato p7 eliminar coincidencias: ") 
+query = "DELETE FROM b WHERE b2 = '%s'" % criterio 
+run_query(query)
+
+#Actualizar datos
+b1 = raw_input("ID: ") 
+b2 = raw_input("Nuevo valor: ") 
+query = "UPDATE b SET b2='%s' WHERE b1 = %i" % (b2, int(b1)) 
+run_query(query)
+                
+# all.py
+    def get_tasks():
+        pass
+    def describe_task(task_id):
+        pass
+    def add_task(summary, description=""):
+        pass
+    def task_done(task_id):
+        pass
+    def update_task(task_id, summary, description):
+        pass
+
+#Acceder a bd
+    def run_query(query=''): 
+    datos = [DB_HOST, DB_USER, DB_PASS, DB_NAME] 
+    
+    conn = MySQLdb.connect(*datos)# Conectamos a la base de datos 
+    cursor = conn.cursor()# Creamos un cursor 
+    cursor.execute(query)# Ejecutamos una consulta 
+
+    if query.upper().startswith('SELECT'): 
+        data = cursor.fetchall()# Traemos los resultados de un select 
+    else: 
+        conn.commit()# Hacemos efectiva la escritura de datos 
+        data = None 
+    
+    cursor.close()# Cerramos el cursor 
+    conn.close()# Cerramos la conexión 
+
+    return data
+
+# Path     
+    def _url(path): 
+    return 'https://api.university.com' + path
+    
+#Request
+
+def get_tasks():
+    return requests.get(_url('/tasks/'))
+
+def describe_task(task_id):
+    return requests.get(_url('/tasks/{:d}/'.format(task_id)))
+
+
+def add_task(summary, description=""):
+    return requests.post(_url('/tasks/'), json={
+        'summary': summary,
+        'description': description,
+        })
+
+def task_done(task_id):
+    return requests.delete(_url('/tasks/{:d}/'.format(task_id)))
+
+def update_task(task_id, summary, description):
+    url = _url('/tasks/{:d}/'.format(task_id))
+    return requests.put(url, json={
+        'summary': summary,
+        'description': description,
+        })
